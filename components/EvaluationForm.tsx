@@ -113,19 +113,21 @@ export const EvaluationForm: FC = () => {
       console.log('Save successful!', data);
       setSaveMessage('Player evaluation saved successfully!');
       setTimeout(() => setSaveMessage(''), 3000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving evaluation - Full error:', error);
       console.error('Error type:', typeof error);
       console.error('Error keys:', Object.keys(error || {}));
 
       let errorMessage = 'Unknown error';
 
-      if (error?.message) {
-        errorMessage = error.message;
-      } else if (error?.error_description) {
-        errorMessage = error.error_description;
-      } else if (error?.hint) {
-        errorMessage = error.hint;
+      if (error && typeof error === 'object') {
+        if ('message' in error && typeof error.message === 'string') {
+          errorMessage = error.message;
+        } else if ('error_description' in error && typeof error.error_description === 'string') {
+          errorMessage = error.error_description;
+        } else if ('hint' in error && typeof error.hint === 'string') {
+          errorMessage = error.hint;
+        }
       } else if (typeof error === 'string') {
         errorMessage = error;
       }
